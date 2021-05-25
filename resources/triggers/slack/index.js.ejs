@@ -2,6 +2,7 @@
 
 const axios = require("axios");
 
+
 class SlackMessageSender {
   sendMessage(record) {
     const slackHookUrl = process.env.WEBHOOK_URL;
@@ -14,12 +15,20 @@ class SlackMessageSender {
       SUCCEED: ':tada:',
       FAILED: ':x:'
     };
+
+    const statusColors = {
+      "SUCCEED":"#4caf50",
+      "FAILED":"#ef5350",
+      "STARTED":"#f4511e"
+    };
+
     const { detail, region } = event;
     const { appId, branchName, jobId, jobStatus } = detail;
     const appUrl = `https://${branchName}.${appId}.amplifyapp.com/`;
     const jobUrl = `https://console.aws.amazon.com/amplify/home?region=${region}#${appId}/${branchName}/${jobId}`;
     const emoji = statusToEmoji[jobStatus] || '';
     return {
+      color: statusColors[jobStatus],
       blocks: [
         {
           type: "section",
